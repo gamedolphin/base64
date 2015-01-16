@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<head>
+  <script>
+   function previewFile(){
+       var preview = document.getElementById('myImg'); //selects the query named img
+       var file    = document.getElementById("upImg").files[0]; //sames as here
+       var reader  = new FileReader();
+
+       reader.onloadend = function () {
+           preview.src = reader.result;
+           convertImgToBase64(reader.result,putInTextBox)
+       }
+
+       if (file) {
+           reader.readAsDataURL(file); //reads the data as a URL
+       } else {
+           preview.src = "";
+       }
+   }
+   function convertImgToBase64(url, callback, outputFormat){
+       var canvas = document.createElement('canvas');
+       var ctx = canvas.getContext('2d');
+       var img = new Image;
+       img.crossOrigin = 'Anonymous';
+       img.onload = function(){
+	   canvas.height = img.height;
+	   canvas.width = img.width;
+	   ctx.drawImage(img,0,0);
+	   var dataURL = canvas.toDataURL(outputFormat || 'image/png');
+	   callback.call(this, dataURL);
+           // Clean up
+	   canvas = null;
+       };
+       img.src = url;
+   }
+   function putInTextBox(base64){
+       var tb = document.getElementById("out");
+       tb.value = "";
+       tb.value = base64;
+   }
+
+  </script>
+</head>
+<body>
+    <input type='file' id="upImg" accept="image/*" onchange="previewFile()"/>
+    <div><textarea id="out" style="width:600px;height:400px;" readonly></textarea>
+        <img id="myImg" src="#" alt="your image"/>
+    </div>
+</body>
